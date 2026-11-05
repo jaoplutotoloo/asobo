@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Asobo! あそぼ！</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Mali:wght@400;600&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ink:#495c39;--soft:#51594a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background-color:#FAF7F2;background-image:radial-gradient(#e9dfd0 1.3px,transparent 1.3px);background-size:22px 22px;color:var(--ink);font-family:'Mali','Zen Maru Gothic','Fredoka',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+.logo{font-family:'Fredoka','Zen Maru Gothic',sans-serif;font-weight:600}
+.paper{background:#fff;border:2.5px dashed #f0d3d8;border-radius:1.5rem;box-shadow:6px 6px 0 #ffe3e8}
+.chip{border:2px dashed #f0d3d8;border-radius:999px;padding:.35rem .8rem;cursor:pointer;background:#fff;transition:transform .2s,background .2s;font-size:.9rem;user-select:none}
+.chip:hover{transform:scale(1.06) rotate(-1deg)}
+.chip.on{background:#ffe3e8;border-style:solid;border-color:#e88fa3;color:#8a3b52}
+.act{border:2px dashed #f0d3d8;border-radius:1.25rem;padding:.6rem .2rem;text-align:center;cursor:pointer;background:#fff;transition:transform .2s;font-size:.78rem;line-height:1.2}
+.act span{display:block;font-size:1.7rem}
+.act:hover{transform:scale(1.07) rotate(2deg)}
+.act.on{background:#FDE2E4;border:2px solid #e88fa3;transform:rotate(-2deg)}
+input[type=text],input[type=datetime-local],textarea{width:100%;border:2px dashed #f0d3d8;border-radius:1rem;padding:.6rem .85rem;background:#fffdfb;color:var(--ink);font:inherit;outline:none}
+input:focus,textarea:focus{border-style:solid;border-color:#E0C3FC}
+.lbl{font-weight:600;font-size:.95rem;margin-bottom:.4rem;display:block}
+.btn{border-radius:999px;padding:.85rem 1.4rem;font-weight:600;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);transition:transform .2s,box-shadow .2s;cursor:pointer;font-family:inherit}
+.btn:hover{transform:scale(1.05) translate(-1px,-1px)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.th-pink{--bg:#ffe3e8;--edge:#f0d3d8;--ac:#e88fa3}
+.th-matcha{--bg:#E2ECE9;--edge:#b9d3c0;--ac:#7fa37a}
+.th-lav{--bg:#efe1fd;--edge:#E0C3FC;--ac:#a982d6}
+.card{position:relative;background:var(--bg);border:3px dashed var(--ac);border-radius:1.75rem;padding:1.4rem 1.2rem 1.3rem;box-shadow:6px 6px 0 var(--edge);overflow:hidden;color:var(--ink);text-align:center}
+.card .inner{background:#fff;border-radius:1.25rem;padding:1rem .9rem;border:2px solid var(--edge);position:relative;z-index:2}
+.stamp{position:absolute;top:10px;right:12px;background:#fff;border:2px solid var(--ac);border-radius:.7rem;padding:.1rem .5rem;font-size:.75rem;transform:rotate(8deg);font-weight:700;z-index:3;color:var(--ac)}
+.stk{position:absolute;font-size:1.5rem;animation:flt 4s ease-in-out infinite;z-index:1;pointer-events:none}
+@keyframes flt{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-9px) rotate(8deg)}}
+.big{font-size:3.2rem;display:inline-block;animation:bob 2.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.12) rotate(4deg)}}
+.pill{display:inline-block;background:var(--bg);border-radius:999px;padding:.15rem .7rem;font-size:.8rem;margin:.15rem;border:1.5px dashed var(--ac)}
+.hidden{display:none!important}
+/* envelope */
+.env{position:relative;width:min(300px,80vw);height:200px;margin:0 auto;cursor:pointer;animation:bob 2.5s ease-in-out infinite;transition:opacity .5s,transform .5s}
+.env .body{position:absolute;inset:0;background:#ffe3e8;border:3px solid #e88fa3;border-radius:1rem;box-shadow:6px 6px 0 #f0d3d8}
+.env .flap{position:absolute;left:0;right:0;top:0;height:110px;background:#f7c6d1;border:3px solid #e88fa3;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .7s ease;z-index:3}
+.env .seal{position:absolute;left:50%;top:84px;transform:translateX(-50%);font-size:2rem;z-index:4;transition:opacity .3s}
+.env.open{animation:none;opacity:0;transform:translateY(30px) scale(.9)}
+.env.open .flap{transform:rotateX(180deg)}
+.env.open .seal{opacity:0}
+.pop{animation:pop .7s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.3) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.modal{position:fixed;inset:0;background:rgba(73,92,57,.35);display:flex;align-items:center;justify-content:center;padding:1rem;z-index:50}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#fff;border:2.5px solid #e88fa3;border-radius:1.2rem;padding:.7rem 1.1rem;z-index:60;box-shadow:4px 4px 0 #ffe3e8;text-align:center;max-width:88vw}
+</style>
+</head>
+<body>
+
+<!-- CREATOR -->
+<main id="creator" class="max-w-5xl mx-auto px-4 py-6 pb-16">
+  <header class="text-center mb-6 relative">
+    <span class="stk" style="left:8%;top:0">🌸</span><span class="stk" style="right:10%;top:6px;animation-delay:1s">⭐</span>
+    <h1 class="logo text-5xl md:text-6xl -rotate-2" style="color:#e88fa3;text-shadow:3px 3px 0 #fff,5px 5px 0 #f0d3d8">Asobo!<span class="block text-2xl" style="color:var(--ink);text-shadow:none">あそぼ！</span></h1>
+    <p class="mt-3 text-sm md:text-base">Create cute invitations for your favorite people 💌</p>
+  </header>
+
+  <div class="grid lg:grid-cols-2 gap-6 items-start">
+    <section class="paper p-5 space-y-5 rotate-[-.4deg]">
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="lbl" for="nm">To 💖</label><input type="text" id="nm" maxlength="24" placeholder="Their name"></div>
+        <div><label class="lbl" for="fr">From ✍️</label><input type="text" id="fr" maxlength="24" placeholder="Your name"></div>
+      </div>
+      <div><span class="lbl">They are my…</span><div id="rels" class="flex flex-wrap gap-2"></div></div>
+      <div><span class="lbl">What shall we do? 🎀</span><div id="acts" class="grid grid-cols-3 gap-2"></div>
+        <input type="text" id="cu" maxlength="30" placeholder="Name your custom plan 🎈" class="mt-2 hidden"></div>
+      <div><label class="lbl" for="dt">When? 🗓️</label><input type="datetime-local" id="dt">
+        <label class="flex items-center gap-2 mt-2 text-sm cursor-pointer"><input type="checkbox" id="pk" class="w-4 h-4 accent-pink-400"> You pick the date! 🗓️</label></div>
+      <div><span class="lbl">Sweet perks (bribes) 🍬</span><div id="perks" class="flex flex-wrap gap-2"></div></div>
+      <div><label class="lbl" for="ms">Secret note 💌 <span id="cnt" class="text-xs opacity-60 float-right">0/140</span></label><textarea id="ms" rows="3" maxlength="140" placeholder="Please come, I will be so happy…"></textarea></div>
+      <div><span class="lbl">Theme 🎨</span><div id="ths" class="flex flex-wrap gap-2"></div></div>
+      <button id="gen" class="btn w-full text-lg" style="background:#E0C3FC">Generate Shareable Link ✨</button>
+    </section>
+
+    <aside class="lg:sticky lg:top-4">
+      <p class="logo text-center mb-2 text-sm opacity-70">live preview ✨</p>
+      <div id="prev" class="rotate-1"></div>
+    </aside>
+  </div>
+</main>
+
+<!-- RECIPIENT -->
+<main id="recipient" class="hidden max-w-md mx-auto px-4 py-8 min-h-screen flex flex-col justify-center text-center">
+  <div id="envWrap">
+    <p id="envTitle" class="logo text-xl mb-6"></p>
+    <div id="env" class="env"><div class="body"></div><div class="flap"></div><div class="seal">💗</div></div>
+    <p class="mt-6 text-sm opacity-70">tap the envelope to open ✨</p>
+  </div>
+  <div id="show" class="hidden">
+    <div id="rcard" class="pop"></div>
+    <div id="acts2" class="mt-6">
+      <div id="btnRow" class="relative flex flex-wrap justify-center gap-3 min-h-[120px] items-start">
+        <button id="yes" class="btn" style="background:#ffe3e8">Accept! ไปแน่นอน ✨</button>
+        <button id="no" class="btn" style="background:#fff;transition:transform .35s cubic-bezier(.34,1.56,.64,1)">Refuse / ไม่ไป 🥺</button>
+      </div>
+    </div>
+    <div id="done" class="hidden mt-6 space-y-3 pop">
+      <p class="logo text-2xl" style="color:#e88fa3">Yay!! See you there 🎉</p>
+      <a id="cal" target="_blank" rel="noopener" class="btn block" style="background:#E2ECE9">Save to Calendar 🗓️</a>
+      <a id="line" target="_blank" rel="noopener" class="btn block" style="background:#c9f0c0">Send Confirmation to LINE 💬</a>
+    </div>
+    <button onclick="location.hash='';" class="mt-8 text-xs underline opacity-60">make my own invite 💌</button>
+  </div>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="paper p-5 max-w-sm w-full text-center pop">
+    <div class="text-4xl">💌✨</div>
+    <h2 class="logo text-2xl mt-1">Your link is ready!</h2>
+    <input type="text" id="lnk" readonly class="mt-3 text-xs">
+    <div class="grid gap-2 mt-3">
+      <button id="copy" class="btn" style="background:#ffe3e8">Copy Link 📋</button>
+      <a id="toLine" target="_blank" rel="noopener" class="btn" style="background:#c9f0c0">Share to LINE 💬</a>
+      <button id="peek" class="btn" style="background:#E0C3FC">Preview as recipient 👀</button>
+      <button id="close" class="text-sm underline opacity-70 mt-1">close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const REL=["Bestie","Bae","Family","Secret Crush"];
+const ACT=[["☕","Cafe Hopping"],["🍿","Movie Night"],["🎨","Art Exhibition"],["🍲","Buffet / Shabu"],["🌙","Stargazing"],["🎈","Custom"]];
+const PERK=["Free Boba Tea 🧋","I will drive 🚗","My treat 💳","Endless photos 📸"];
+const TH=[["pink","Sakura Pink 🌸"],["matcha","Matcha Mint 🍃"],["lav","Soft Lavender 🔮"]];
+const STK=["🌸","⭐","🧸","🥛","💖","✨","🌸","🍓"];
+let S={n:"",f:"",r:0,a:0,c:"",d:"",p:0,k:[0],m:"",t:"pink"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function enc(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function dec(h){h=h.replace(/-/g,"+").replace(/_/g,"/");while(h.length%4)h+="=";return JSON.parse(decodeURIComponent(escape(atob(h))))}
+
+function when(d){if(d.p||!d.d)return "You pick the date! 🗓️";
+  return new Date(d.d).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
+function actName(d){return d.a===5&&d.c?d.c:ACT[d.a][1]}
+
+function cardHTML(d){
+  const stk=STK.map((s,i)=>`<span class="stk" style="left:${[4,86,10,80,48,92,70,25][i]}%;top:${[6,12,88,84,2,50,94,95][i]}%;animation-delay:${i*.4}s;font-size:${1.1+(i%3)*.3}rem">${s}</span>`).join("");
+  return `<div class="card th-${d.t}">${stk}<div class="stamp">あそぼ!</div>
+  <div class="inner">
+    <p class="text-sm opacity-70">${d.f?esc(d.f)+" is inviting":"You are invited"}</p>
+    <p class="logo text-2xl mt-1">${d.n?esc(d.n):"Someone special"} <span class="text-sm" style="color:var(--ac)">(${REL[d.r]})</span></p>
+    <div class="my-2"><span class="big">${ACT[d.a][0]}</span></div>
+    <p class="logo text-xl" style="color:var(--ac)">${esc(actName(d))}</p>
+    <p class="mt-1 text-sm">📅 ${esc(when(d))}</p>
+    <div class="mt-3">${d.k.map(i=>`<span class="pill">${PERK[i]}</span>`).join("")}</div>
+    ${d.m?`<p class="mt-3 text-sm p-3 rounded-2xl" style="background:var(--bg);transform:rotate(-1deg)">“${esc(d.m)}”</p>`:""}
+  </div></div>`;
+}
+
+function pill(cls,txt,on,fn){const b=document.createElement("div");b.className=cls+(on?" on":"");b.innerHTML=txt;b.onclick=fn;return b}
+function renderForm(){
+  $("rels").replaceChildren(...REL.map((r,i)=>pill("chip",r,S.r===i,()=>{S.r=i;renderForm()})));
+  $("acts").replaceChildren(...ACT.map((a,i)=>pill("act",`<span>${a[0]}</span>${a[1]}`,S.a===i,()=>{S.a=i;renderForm()})));
+  $("cu").classList.toggle("hidden",S.a!==5);
+  $("perks").replaceChildren(...PERK.map((p,i)=>pill("chip",p,S.k.includes(i),()=>{S.k=S.k.includes(i)?S.k.filter(x=>x!==i):[...S.k,i];renderForm()})));
+  $("ths").replaceChildren(...TH.map(t=>pill("chip",t[1],S.t===t[0],()=>{S.t=t[0];renderForm()})));
+  $("prev").innerHTML=cardHTML(S);
+}
+[["nm","n"],["fr","f"],["cu","c"],["dt","d"],["ms","m"]].forEach(([id,k])=>$(id).addEventListener("input",e=>{S[k]=e.target.value;if(id==="ms")$("cnt").textContent=e.target.value.length+"/140";$("prev").innerHTML=cardHTML(S)}));
+$("pk").onchange=e=>{S.p=e.target.checked?1:0;$("dt").disabled=!!S.p;$("prev").innerHTML=cardHTML(S)};
+
+function boom(big){const o={colors:["#ffe3e8","#E0C3FC","#FDE2E4","#E2ECE9","#e88fa3","#f7e58a"],shapes:["circle","square"]};
+  try{confetti({...o,particleCount:big?220:90,spread:big?120:80,origin:{y:.65}});if(big){setTimeout(()=>confetti({...o,particleCount:100,angle:60,spread:70,origin:{x:0,y:.7}}),200);setTimeout(()=>confetti({...o,particleCount:100,angle:120,spread:70,origin:{x:1,y:.7}}),350)}}catch(e){}}
+function tone(){try{const c=new(window.AudioContext||window.webkitAudioContext)();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=f;o.connect(g);g.connect(c.destination);const t=c.currentTime+i*.11;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)})}catch(e){}}
+function toast(msg){const t=document.createElement("div");t.className="toast pop";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
+
+let link="";
+$("gen").onclick=()=>{
+  if(!S.n.trim()){toast("Add their name first 💖");$("nm").focus();return}
+  link=location.href.split("#")[0]+"#"+enc(S);
+  $("lnk").value=link;
+  $("toLine").href="https://line.me/R/msg/text/?"+encodeURIComponent("あそぼ！ A special invite for you 💌 "+link);
+  $("modal").classList.remove("hidden");boom(false);
+};
+$("copy").onclick=()=>{
+  const done=()=>toast("Link copied! 💕");
+  if(navigator.clipboard)navigator.clipboard.writeText(link).then(done,fb);else fb();
+  function fb(){$("lnk").select();try{document.execCommand("copy");done()}catch(e){toast("Long-press the link to copy 💕")}}
+};
+$("close").onclick=()=>$("modal").classList.add("hidden");
+$("peek").onclick=()=>{$("modal").classList.add("hidden");location.hash=enc(S)};
+
+// recipient
+let D=null;
+function gcalDates(d){const f=x=>x.getFullYear()+String(x.getMonth()+1).padStart(2,"0")+String(x.getDate()).padStart(2,"0")+"T"+String(x.getHours()).padStart(2,"0")+String(x.getMinutes()).padStart(2,"0")+"00";
+  const s=new Date(d.d);return f(s)+"/"+f(new Date(s.getTime()+2*3600e3))}
+function showRecipient(){
+  $("creator").classList.add("hidden");$("recipient").classList.remove("hidden");
+  $("envWrap").classList.remove("hidden");$("show").classList.add("hidden");$("env").classList.remove("open");
+  $("envTitle").innerHTML=`A special message for ${esc(D.n||"you")}! 💌`;
+  $("rcard").innerHTML=cardHTML(D);
+  $("btnRow").classList.remove("hidden");$("done").classList.add("hidden");
+  const no=$("no");no.style.transform="";no.classList.remove("hidden");$("yes").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+$("env").onclick=()=>{$("env").classList.add("open");setTimeout(()=>{$("envWrap").classList.add("hidden");$("show").classList.remove("hidden");boom(false)},800)};
+$("yes").onclick=()=>{
+  boom(true);tone();$("btnRow").classList.add("hidden");$("done").classList.remove("hidden");
+  const t=encodeURIComponent("あそぼ！ "+actName(D)+(D.f?" with "+D.f:""));
+  $("cal").href=D.d&&!D.p?`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${t}&dates=${gcalDates(D)}`:`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${t}`;
+  $("line").href="https://line.me/R/msg/text/?"+encodeURIComponent(`${D.n||"I"} said YES! ไปแน่นอน ✨ ${actName(D)} ${when(D)} 💖`);
+};
+let dodge=0;
+function run(e){
+  e.preventDefault();dodge++;
+  const b=$("no"),r=$("btnRow").getBoundingClientRect();
+  const x=(Math.random()-.5)*Math.min(240,r.width),y=Math.random()*90-10;
+  b.style.transform=`translate(${x}px,${y}px) rotate(${(Math.random()-.5)*30}deg)`;
+  if(e.type==="click"||dodge%3===0)toast("Option not available! You HAVE to come! 😜");
+}
+$("no").addEventListener("pointerenter",run);$("no").addEventListener("click",run);
+
+function route(){
+  const h=location.hash.slice(1);
+  if(h){try{D=dec(h);if(typeof D.a!=="number"||!ACT[D.a])throw 0;D.k=(D.k||[]).filter(i=>PERK[i]);D.r=REL[D.r]?D.r:0;D.t=["pink","matcha","lav"].includes(D.t)?D.t:"pink";showRecipient();return}catch(e){}}
+  $("recipient").classList.add("hidden");$("creator").classList.remove("hidden");
+}
+addEventListener("hashchange",route);
+renderForm();route();
+</script>
+</body>
+</html>
